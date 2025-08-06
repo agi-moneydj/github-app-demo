@@ -22,14 +22,51 @@
 
 ## 🚀 準備階段 (3分鐘)
 
-### 步驟 1: 安裝 GitHub App (一次性設定)
+### 步驟 1: 準備環境（僅需一次設定）
+
+#### 安裝 GitHub CLI（可選但建議）
+```bash
+# Windows (使用 winget)
+winget install GitHub.cli
+
+# macOS (使用 brew)
+brew install gh
+
+# Ubuntu/Debian
+sudo apt install gh
+```
+
+#### GitHub CLI 認證設定
+```bash
+# 登入 GitHub
+gh auth login
+# 選擇 GitHub.com
+# 選擇 HTTPS
+# 選擇使用瀏覽器登入
+# 完成網頁認證
+
+# 驗證登入狀態
+gh auth status
+```
+
+#### Git 基礎設定
+```bash
+# 設定使用者資訊（如果尚未設定）
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+
+# 檢查設定
+git config --list --global
+```
+
+### 步驟 2: 安裝 GitHub App (一次性設定)
 ```bash
 # 在 Claude Code 中執行 (每個 GitHub 帳號只需執行一次)
 /install-github-app
 ```
 **注意**: `/install-github-app` 是針對 GitHub 帳號的一次性設定，安裝後該帳號下的所有 repositories 都可以使用 Claude GitHub App 功能。
 
-### 步驟 2: 建立示範專案 (多種方式)
+### 步驟 3: 建立示範專案 (多種方式)
 
 #### 方式 A: 使用自然語言請 Claude 處理
 ```
@@ -57,7 +94,7 @@ cd github-app-demo
 
 **建議**: 使用方式 A，讓 Claude 自動處理所有步驟！
 
-### 步驟 3: 檢查專案結構
+### 步驟 4: 檢查專案結構
 ```
 taskmanager-api-demo/
 ├── server.js          # 主應用程式（包含問題代碼）
@@ -73,9 +110,51 @@ taskmanager-api-demo/
 **觸發方式**: 建立包含安全漏洞的 Pull Request
 
 **展示步驟**:
-1. 建立新分支 `feature/search-api`
-2. 修改 `server.js` 的搜索功能（故意加入 SQL 注入漏洞）
-3. 創建 Pull Request
+
+#### Git 命令方式：
+```bash
+# 1. 建立並切換到新分支
+git checkout -b feature/search-api
+
+# 2. 修改 server.js（加入 SQL 注入漏洞）
+# 手動編輯 server.js 檔案，或使用編輯器
+
+# 3. 提交變更
+git add server.js
+git commit -m "Add search API with SQL injection vulnerability (for demo)"
+
+# 4. 推送分支到 GitHub
+git push origin feature/search-api
+
+# 5. 創建 Pull Request
+git push origin feature/search-api
+# 然後前往 GitHub 網頁創建 PR，或使用：
+```
+
+#### GitHub CLI 方式：
+```bash
+# 前提：已完成 gh auth login
+gh auth status  # 確認已登入
+
+# 1. 建立分支並修改檔案
+git checkout -b feature/search-api
+
+# 2. 提交變更（同上）
+git add server.js
+git commit -m "Add search API with SQL injection vulnerability (for demo)"
+
+# 3. 推送並創建 PR（一次完成）
+gh pr create --title "Add search API endpoint" --body "Adding new search functionality for tasks" --head feature/search-api --base master
+```
+
+#### 自然語言方式（推薦給初學者）：
+```
+請幫我：
+1. 建立一個新分支叫 feature/search-api
+2. 在這個分支修改 server.js，加入一個有 SQL 注入漏洞的搜索功能
+3. 提交變更並推送到 GitHub
+4. 創建一個 Pull Request
+```
 
 **問題代碼**:
 ```javascript
@@ -98,8 +177,41 @@ app.get('/api/search', (req, res) => {
 **觸發方式**: Push 新代碼到 main branch，但缺少文檔
 
 **展示步驟**:
-1. 合併 PR 到 main branch
-2. 專案缺少 README.md 和 API 文檔
+
+#### Git 命令方式：
+```bash
+# 1. 合併 PR 到 main branch
+git checkout master
+git merge feature/search-api
+
+# 2. 模擬缺少文檔的情況（刪除現有文檔）
+git rm README.md
+git commit -m "Remove documentation to demonstrate auto-generation"
+
+# 3. 推送到 main branch 觸發文檔生成
+git push origin master
+```
+
+#### GitHub CLI 方式：
+```bash
+# 1. 合併 PR（如果尚未合併）
+gh pr merge feature/search-api --merge
+
+# 2. 模擬缺少文檔
+git checkout master
+git pull origin master
+git rm README.md
+git commit -m "Remove documentation to demonstrate auto-generation"
+git push origin master
+```
+
+#### 自然語言方式（推薦給初學者）：
+```
+請幫我：
+1. 合併剛才的 Pull Request 到 master 分支
+2. 刪除 README.md 檔案來模擬缺少文檔的情況
+3. 推送變更到 GitHub，觸發 Claude 自動生成文檔
+```
 
 **預期 Claude 自動生成**:
 - ✅ 完整的 README.md
@@ -120,6 +232,47 @@ app.get('/api/search', (req, res) => {
 ### 場景 3: 安全漏洞掃描 (3分鐘)
 
 **觸發方式**: 安全敏感程式碼變更或依賴更新
+
+**展示步驟**:
+
+#### Git 命令方式：
+```bash
+# 1. 建立安全問題修復分支
+git checkout -b security/fix-vulnerabilities
+
+# 2. 修改 server.js 和 package.json（加入安全問題）
+# 手動編輯檔案，或使用編輯器
+
+# 3. 提交變更
+git add server.js package.json
+git commit -m "Update dependencies and auth code (contains security issues)"
+
+# 4. 推送並創建 PR
+git push origin security/fix-vulnerabilities
+# 前往 GitHub 創建 PR 或使用 gh cli
+```
+
+#### GitHub CLI 方式：
+```bash
+# 1. 建立分支
+git checkout -b security/fix-vulnerabilities
+
+# 2. 提交變更（同上）
+git add server.js package.json
+git commit -m "Update dependencies and auth code (contains security issues)"
+
+# 3. 推送並創建 PR
+gh pr create --title "Security updates" --body "Updating authentication and dependencies" --head security/fix-vulnerabilities --base master
+```
+
+#### 自然語言方式（推薦給初學者）：
+```
+請幫我：
+1. 建立一個新分支 security/fix-vulnerabilities
+2. 修改 server.js 和 package.json，故意加入一些安全問題供演示
+3. 提交變更並創建 Pull Request
+4. 等待 Claude 進行安全掃描並提供報告
+```
 
 **展示問題**:
 ```javascript
@@ -143,6 +296,46 @@ const { username, password } = req.body; // 直接使用
 ### 場景 4: 重構建議 (3分鐘)
 
 **觸發方式**: 檢測到程式碼異味
+
+**展示步驟**:
+
+#### Git 命令方式：
+```bash
+# 1. 建立重構分支
+git checkout -b refactor/improve-code-quality
+
+# 2. 故意加入程式碼異味（重複程式碼、長函數等）
+# 手動編輯 server.js，加入重複和複雜的程式碼
+
+# 3. 提交變更
+git add server.js
+git commit -m "Add complex code patterns for refactoring demo"
+
+# 4. 推送並創建 PR
+git push origin refactor/improve-code-quality
+```
+
+#### GitHub CLI 方式：
+```bash
+# 1. 建立分支並修改
+git checkout -b refactor/improve-code-quality
+
+# 2. 提交變更（同上）
+git add server.js
+git commit -m "Add complex code patterns for refactoring demo"
+
+# 3. 推送並創建 PR
+gh pr create --title "Code refactoring improvements" --body "Improving code structure and removing duplications" --head refactor/improve-code-quality --base master
+```
+
+#### 自然語言方式（推薦給初學者）：
+```
+請幫我：
+1. 建立一個新分支 refactor/improve-code-quality
+2. 修改 server.js，加入一些重複程式碼和長函數供演示
+3. 提交變更並創建 Pull Request
+4. 等待 Claude 分析程式碼異味並提供重構建議
+```
 
 **展示問題**:
 ```javascript
@@ -170,6 +363,46 @@ app.get('/api/tasks-with-details', authenticateToken, async (req, res) => {
 ### 場景 5: 效能監控 (2分鐘)
 
 **觸發方式**: 檢測到效能問題
+
+**展示步驟**:
+
+#### Git 命令方式：
+```bash
+# 1. 建立效能優化分支
+git checkout -b performance/optimize-queries
+
+# 2. 加入效能問題程式碼（N+1 查詢等）
+# 手動編輯 server.js，加入 N+1 查詢問題
+
+# 3. 提交變更
+git add server.js
+git commit -m "Add database queries with performance issues"
+
+# 4. 推送並創建 PR
+git push origin performance/optimize-queries
+```
+
+#### GitHub CLI 方式：
+```bash
+# 1. 建立分支
+git checkout -b performance/optimize-queries
+
+# 2. 提交變更（同上）
+git add server.js
+git commit -m "Add database queries with performance issues"
+
+# 3. 推送並創建 PR
+gh pr create --title "Performance optimizations" --body "Optimizing database queries and improving response times" --head performance/optimize-queries --base master
+```
+
+#### 自然語言方式（推薦給初學者）：
+```
+請幫我：
+1. 建立一個新分支 performance/optimize-queries
+2. 修改 server.js，加入一些 N+1 查詢問題供演示
+3. 提交變更並創建 Pull Request
+4. 等待 Claude 分析效能問題並提供優化建議
+```
 
 **展示問題**:
 ```javascript
