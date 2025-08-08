@@ -126,7 +126,7 @@ app.get('/api/search', (req, res) => {
   
   db.all(query, (err, results) => {
     if (err) {
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ error: 'Database error ' });
     }
     res.json(results);
   });
